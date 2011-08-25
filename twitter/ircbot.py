@@ -66,9 +66,9 @@ from .util import htmlentitydecode
 
 PREFIXES = dict(
     cats=dict(
-        new_tweet="=^_^= ",
-        error="=O_o= ",
-        inform="=o_o= "
+        new_tweet="",
+        error="",
+        inform=""
         ),
     none=dict(
         new_tweet=""
@@ -154,6 +154,7 @@ class TwitterBot(object):
         self.irc = irclib.IRC()
         self.irc.add_global_handler('privmsg', self.handle_privmsg)
         self.irc.add_global_handler('ctcp', self.handle_ctcp)
+        self.irc.add_global_handler('topic', self.handle_topic)
         self.ircServer = self.irc.server()
 
         self.sched = Scheduler(
@@ -181,12 +182,14 @@ class TwitterBot(object):
                 # Skip updates beginning with @
                 # TODO This would be better if we only ignored messages
                 #   to people who are not on our following list.
-                if not text.startswith(b"@"):
-                    msg = "%s %s%s%s %s" %(
-                        get_prefix(),
-                        IRC_BOLD, update['user']['screen_name'],
-                        IRC_BOLD, text.decode('utf8'))
-                    self.privmsg_channels(msg)
+
+                # don't want to skip updates beginning with @
+                #if not text.startswith(b"@"):
+                msg = "%s %s%s%s %s" %(
+                    get_prefix(),
+                    IRC_BOLD, update['user']['screen_name'],
+                    IRC_BOLD, text.decode('utf8'))
+                self.privmsg_channels(msg)
 
                 nextLastUpdate = crt
 
@@ -194,6 +197,11 @@ class TwitterBot(object):
 
     def process_events(self):
         self.irc.process_once()
+
+    def handle_topic(self, conn, evt):
+        debug('topic changed')
+        status = evt.arguments()[0].encode('utf8', 'replace')
+        self.twitter.statuses.update(status=status)
 
     def handle_privmsg(self, conn, evt):
         debug('got privmsg')

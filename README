@@ -44,6 +44,8 @@ account you create for the bot). The bot announces all tweets from friends
 it is following. It can be made to follow or leave friends through IRC /msg
 commands.
 
+In this fork, it will also automatically tweet topic changes.
+
 
 
 twitter-log
