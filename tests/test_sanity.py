@@ -1,3 +1,4 @@
+# encoding: utf8
 
 from random import choice
 
@@ -35,6 +36,15 @@ def test_API_set_tweet():
     assert random_tweet == recent[0]['text']
 
 
+def test_API_set_unicode_tweet():
+    random_tweet = u"A random tweet with unicode ⇰ÐÀ " + get_random_str()
+    twitter.statuses.update(status=random_tweet)
+
+    recent = twitter.statuses.user_timeline()
+    assert recent
+    assert random_tweet == recent[0]['text']
+
+
 def test_API_friendship_exists():
     assert True == twitter.friendships.exists(
         user_a='ptttest0001', user_b='sixohsix')
@@ -46,3 +56,16 @@ def test_search():
     t_search = Twitter(domain='search.twitter.com')
     results = t_search.search(q='foo')
     assert results
+
+
+def test_get_trends():
+    # This is one method of inserting parameters, using named
+    # underscore params.
+    world_trends = twitter.trends._woeid(_woeid=1)
+    assert world_trends
+
+
+def test_get_trends_2():
+    # This is a nicer variation of the same call as above.
+    world_trends = twitter.trends._(1)
+    assert world_trends

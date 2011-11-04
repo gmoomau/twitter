@@ -33,13 +33,14 @@ class TwitterHTTPError(TwitterError):
         self.uri = uri
         self.format = format
         self.uriparts = uriparts
+        self.response_data = self.e.fp.read()
 
     def __str__(self):
         return (
             "Twitter sent status %i for URL: %s.%s using parameters: "
             "(%s)\ndetails: %s" %(
                 self.e.code, self.uri, self.format, self.uriparts,
-                self.e.fp.read()))
+                self.response_data))
 
 class TwitterResponse(object):
     """
@@ -78,11 +79,6 @@ def wrap_response(response, headers):
     class WrappedTwitterResponse(response_typ, TwitterResponse):
         __doc__ = TwitterResponse.__doc__
 
-        def __init__(self, response):
-            if response_typ is not int:
-                response_typ.__init__(self, response)
-            TwitterResponse.__init__(self, headers)
-
     return WrappedTwitterResponse(response)
 
 
@@ -104,10 +100,16 @@ class TwitterCall(object):
         try:
             return object.__getattr__(self, k)
         except AttributeError:
-            return self.callable_cls(
-                auth=self.auth, format=self.format, domain=self.domain,
-                callable_cls=self.callable_cls, uriparts=self.uriparts + (k,),
-                secure=self.secure)
+            def extend_call(arg):
+                return self.callable_cls(
+                    auth=self.auth, format=self.format, domain=self.domain,
+                    callable_cls=self.callable_cls, uriparts=self.uriparts \
+                        + (arg,),
+                    secure=self.secure)
+            if k == "_":
+                return extend_call
+            else:
+                return extend_call(k)
 
     def __call__(self, **kwargs):
         # Build the uri.
