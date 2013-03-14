@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '1.7.1'
+version = '1.9.1'
 
 install_requires = [
     # -*- Extra requirements: -*-
@@ -41,6 +41,8 @@ setup(name='twitter',
       twitter=twitter.cmdline:main
       twitterbot=twitter.ircbot:main
       twitter-log=twitter.logger:main
+      twitter-archiver=twitter.archiver:main
+      twitter-follow=twitter.follow:main
       twitter-stream-example=twitter.stream_example:main
       """,
       )

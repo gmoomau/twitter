@@ -11,5 +11,5 @@ Mark Hammond (OAuth support in API)
 Prashant Pawar (IRC bot multi-channel support)
 David Bittencourt (python 2.3 support)
 Bryan Clark (HTTP encoding bugfix, improved exception logging)
-
 George Moomau (irc channel topic tweeting)
+Irfan Ahmad <http://twitter.com/erfaan> (Fixed #91 rate limit headers and #99 twitter API timeouts)
