@@ -186,7 +186,7 @@ class TwitterBot(object):
 
                 # don't want to skip updates beginning with @
                 #if not text.startswith(b"@"):
-                msg = "%s %s%s%s %s" %(
+                msg = "%s%s%s%s %s" %(
                     get_prefix(),
                     IRC_BOLD, update['user']['screen_name'],
                     IRC_BOLD, text.decode('utf8'))
